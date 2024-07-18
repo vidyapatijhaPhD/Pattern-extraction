@@ -1,0 +1,153 @@
+library(Metrics)
+library(ADMM)
+library(cauchypca)
+library(cluster)
+library(kernlab)
+library('nproc')
+library(GLDEX)
+library(SPRT)
+library(stats)
+library(mclust)
+library("copula")
+library("fCopulae")
+library("QRM")
+library("moments")
+library("VineCopula")
+library("psych")
+library(bayestestR)
+library(Metrics)
+library(MLmetrics)
+library(ggplot2)
+library(writexl)
+library(sets)
+library(bnlearn)
+library(bayestestR)
+sets_options("universe", seq(1, 100))
+library(GLDEX)
+library(SPRT)
+library(stats)
+library(tvR)
+library(networkD3)
+library(data.tree)
+library(entropy)
+library(kernlab)
+library(factoextra)
+library(FuzzyR)
+library(relations)
+library(partitions)
+library(matrixcalc)
+library(rstatix)
+library(metaheuristicOpt)
+library(fcaR)
+library(hasseDiagram)
+options(scipen = 999)
+
+X <- read.csv('C:/Users/DELL/Desktop/New paper/New Paper 18/Dataset/updated dataset.csv')
+X_temp <- X[, 1]
+X_pre <- X[, 2]
+X_hum <- X[, 3]
+X_pre = fun.zero.omit(X_pre)
+######################################Temperature#################################
+
+#m=prop.table(X_temp)
+
+#X_temp=c(2, 4, 6, 8, 10, 12, 14)
+X_temp=X_pre
+golden_number_first=0
+golden_number_second=0
+result=0
+for(i in 1:(length(X_temp)-1))
+{
+  if(X_temp[i] <=  X_temp[i+1])
+  {
+    result=(X_temp[i]+X_temp[i])/X_temp[i+1]
+  }
+  else
+  {
+    result=(X_temp[i]+X_temp[i])/X_temp[i]
+  }
+
+  if ((result>=1.61)&&(result<1.80))
+  {
+  golden_number_first[i]=X_temp[i]
+  golden_number_second[i]=X_temp[i+1]
+  }
+}
+#golden_number_first=as.numeric(golden_number_first)
+#golden_number_second=as.numeric(golden_number_second)
+
+golden_number_first=na.omit(golden_number_first)
+golden_number_second=na.omit(golden_number_second)
+
+golden_number_first
+golden_number_second
+write_xlsx(data.frame(golden_number_first), "C:/Users/DELL/Desktop/New paper/New Paper 25/golden_number_first_for_pre.xlsx")
+write_xlsx(data.frame(golden_number_second), "C:/Users/DELL/Desktop/New paper/New Paper 25/golden_number_second_for_pre.xlsx")
+
+
+final_temp=c(golden_number_first, golden_number_second )
+#####################################Forcasting#####################################
+forecasted_harmonious_temperature=map_estimate(final_temp)
+
+
+##########################################Finding most harmony value###############
+
+pobabilistic_value_golden_number_first=prop.table(golden_number_first)
+pobabilistic_value_golden_number_second=prop.table(golden_number_second)
+
+#write_xlsx(data.frame(pobabilistic_value_golden_number_first), "C:/Users/DELL/Desktop/New paper/New Paper 25/golden_number_first.xlsx")
+#write_xlsx(data.frame(pobabilistic_value_golden_number_first), "C:/Users/DELL/Desktop/New paper/New Paper 25/golden_number_second.xlsx")
+
+
+for(i in 1:length(golden_number_first))
+{
+  plausible_value[i]=pobabilistic_value_golden_number_first[i]*pobabilistic_value_golden_number_second[i]
+}
+
+max_plausible_value=max(plausible_value)
+
+for(i in 1:length(plausible_value))
+{
+  if(plausible_value[i]==max(plausible_value))
+  {
+    index=i
+  }
+  most_plausible_pair_first_element = golden_number_first[i]
+  most_plausible_pair_second_element=golden_number_second[i]
+}
+most_plausible_pair_first_element
+most_plausible_pair_second_element
+
+significant_temperature=0
+significant_temperature=((most_plausible_pair_first_element+most_plausible_pair_second_element)/2)
+significant_temperature
+
+#golden_number_first[41]
+#golden_number_second[41]
+###################################Cross-validation################
+
+mape(mean(X_temp), forecasted_harmonious_temperature)
+smape(mean(X_temp), forecasted_harmonious_temperature)
+fuzzyr.accuracy(mean(X_temp), forecasted_harmonious_temperature)
+
+
+mape(mean(X_temp), significant_temperature)
+smape(mean(X_temp), significant_temperature)
+fuzzyr.accuracy(mean(X_temp), significant_temperature)
+
+##############################cross-validation for precipitation################
+mape(mean(X_pre), 1.06)
+smape(mean(X_pre), 1.06)
+fuzzyr.accuracy(mean(X_pre), 1.06)
+
+mape(mean(X_pre), 0.56)
+smape(mean(X_pre), 0.56)
+fuzzyr.accuracy(mean(X_pre), 0.56)
+
+
+
+
+
+
+
+s=c(47, 58)
